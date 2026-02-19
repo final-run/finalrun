@@ -9,7 +9,7 @@
         {
             "name": "finalrun",
             "description": "FinalRun Test Runner: Orchestrate mobile app tests on your local android/ios devices and FinalRun cloud devices",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": "./",
             "author": {
                 "name": "FinalRun",
