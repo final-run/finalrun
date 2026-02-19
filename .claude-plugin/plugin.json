@@ -7,7 +7,7 @@
     "email": "support@finalrun.com"
   },
   "homepage": "https://finalrun.com",
-  "repository": "https://github.com/finalrun/finalrun",
+  "repository": "https://github.com/final-run/finalrun",
   "license": "MIT",
   "keywords": ["testing", "mobile", "finalrun", "mcp", "android", "ios"]
 }

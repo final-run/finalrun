@@ -7,7 +7,7 @@ To use FinalRun with Codex, you need to manually install the skills.
 Tell Codex:
 
 ```
-Clone https://github.com/finalrun/finalrun to ~/.config/codex/plugins/finalrun, then add ~/.config/codex/plugins/finalrun/skills to your skills path.
+Clone https://github.com/final-run/finalrun to ~/.config/codex/plugins/finalrun, then add ~/.config/codex/plugins/finalrun/skills to your skills path.
 ```
 
 Alternatively, you can symlink the skills directory if you have local access.
