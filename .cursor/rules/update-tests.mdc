@@ -1,0 +1,7 @@
+---
+description: Update tests for a specific feature using FinalRun
+globs: *
+---
+
+You MUST use this rule to update tests for a specific feature.
+Invoke the `finalrun:update-test` skill and follow it exactly as presented to you.

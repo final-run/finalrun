@@ -1,0 +1,7 @@
+---
+description: Generate tests for a specific feature using FinalRun
+globs: *
+---
+
+You MUST use this rule to generate tests for a specific feature.
+Invoke the `finalrun:generate-test` skill and follow it exactly as presented to you.
