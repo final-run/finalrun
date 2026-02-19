@@ -1,0 +1,20 @@
+{
+    "name": "finalrun",
+    "description": "Development marketplace for FinalRun plugin",
+    "owner": {
+        "name": "FinalRun",
+        "email": "support@finalrun.com"
+    },
+    "plugins": [
+        {
+            "name": "finalrun",
+            "description": "FinalRun Test Runner: Orchestrate mobile app tests on your local android/ios devices and FinalRun cloud devices",
+            "version": "1.0.0",
+            "source": "./",
+            "author": {
+                "name": "FinalRun",
+                "email": "support@finalrun.com"
+            }
+        }
+    ]
+}
