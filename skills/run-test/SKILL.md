@@ -119,5 +119,5 @@ Use `available_apps` response to get valid pairs.
 
 ## References
 
-- For step-by-step examples: [workflows.md](references/workflows.md)
-- For tool schemas and response fields: [tool-reference.md](references/tool-reference.md)
+- For step-by-step examples: [workflows.md](../references/workflows.md)
+- For tool schemas and response fields: [tool-reference.md](../references/tool-reference.md)
