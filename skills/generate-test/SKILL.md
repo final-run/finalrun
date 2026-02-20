@@ -1,10 +1,19 @@
 ---
+name: finalrun-generate-test
 description: Generate test cases for mobile apps and upload them to FinalRun cloud
 ---
 
 # FinalRun Test Generation
 
 Generate user-focused test specifications for mobile/web apps and upload them to FinalRun cloud via MCP tools.
+
+## MCP Preflight
+
+Before generating tests:
+
+1. Run `ping`.
+2. If ping fails due to missing MCP setup or command errors, run the `finalrun:install-mcp` workflow first.
+3. Continue test generation only after MCP is healthy.
 
 ## Core Principles
 
