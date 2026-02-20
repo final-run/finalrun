@@ -1,7 +1,7 @@
 {
   "name": "finalrun",
   "description": "FinalRun Test Runner: Orchestrate mobile app tests on your local android/ios devices and FinalRun cloud devices",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "FinalRun",
     "email": "support@finalrun.com"
@@ -9,5 +9,12 @@
   "homepage": "https://finalrun.com",
   "repository": "https://github.com/final-run/finalrun",
   "license": "MIT",
-  "keywords": ["testing", "mobile", "finalrun", "mcp", "android", "ios"]
+  "keywords": [
+    "testing",
+    "mobile",
+    "finalrun",
+    "mcp",
+    "android",
+    "ios"
+  ]
 }
