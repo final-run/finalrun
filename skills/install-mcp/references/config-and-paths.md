@@ -4,20 +4,21 @@
 
 - Install root: `~/.finalrun`
 - Wrapper bin dir: `~/.finalrun/bin`
-- MCP home: `~/.finalrun/mcp`
-- Binary dir: `~/.finalrun/mcp/bin`
-- Config file: `~/.finalrun/mcp/config`
+- MCP home: `~/.finalrun/dev-mcp`
+- Binary dir: `~/.finalrun/dev-mcp/bin`
+- Config file: `~/.finalrun/dev-mcp/config`
 
 ## Wrapper Behavior
 
-Wrapper command name: `finalrun-mcp`
+Wrapper command name: `finalrun-dev-mcp`
 
 At runtime the wrapper:
 
-1. Reads `~/.finalrun/mcp/config`.
+1. Reads `~/.finalrun/dev-mcp/config`.
 2. Reads env overrides if present.
 3. Appends missing args (`--api-key`, `--base-url`, `--test-runner-url`) before executing binary.
-4. Supports `finalrun-mcp update` by rerunning installer with `--no-prompt`.
+4. Supports `finalrun-dev-mcp update` by rerunning dev installer with `--no-prompt`.
+5. Allows MCP home override via `FINALRUN_DEV_MCP_HOME`.
 
 ## Config Keys
 
@@ -27,8 +28,8 @@ At runtime the wrapper:
 
 Defaults used by installer when not supplied:
 
-- Base URL: `https://api.finalrun.app`
-- Test runner URL: `https://testrun.finalrun.app/api`
+- Base URL: `https://dev-api.finalrun.app`
+- Test runner URL: `https://dev-testrun.finalrun.app/api`
 
 ## PATH Update Behavior
 

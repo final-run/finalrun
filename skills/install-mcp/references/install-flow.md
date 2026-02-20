@@ -1,4 +1,4 @@
-# Install Flow (From `install.sh`)
+# Install Flow (From `install-dev.sh`)
 
 ## Sequence
 
@@ -8,10 +8,10 @@
 - `uname -s` must be `Darwin`
 - `uname -m` must be `arm64` or `aarch64`
 4. Download binary from default or overridden `--binary-url`.
-5. Install wrapper script at `~/.finalrun/bin/finalrun-mcp`.
-6. Write config at `~/.finalrun/mcp/config`.
+5. Install wrapper script at `~/.finalrun/bin/finalrun-dev-mcp`.
+6. Write config at `~/.finalrun/dev-mcp/config`.
 7. Append `~/.finalrun/bin` to shell profile PATH if missing.
-8. Verify install by running `finalrun-mcp --help`.
+8. Verify install by running `finalrun-dev-mcp --help`.
 9. Print IDE MCP config and update instructions.
 
 ## Interactive vs Non-Interactive
@@ -22,10 +22,10 @@
 ## Canonical Commands
 
 ```bash
-curl -fsSL https://get-mcp.finalrun.app/install.sh | bash
+curl -fsSL https://get-mcp-dev.finalrun.app/install-dev.sh | bash
 ```
 
-# use --no-prompt during `finalrun-mcp update`
+# use --no-prompt during `finalrun-dev-mcp update`
 ```bash
-curl -fsSL https://get-mcp.finalrun.app/install.sh | bash -s -- --no-prompt
+curl -fsSL https://get-mcp-dev.finalrun.app/install-dev.sh | bash -s -- --no-prompt
 ```
