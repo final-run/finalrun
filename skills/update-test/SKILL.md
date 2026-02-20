@@ -1,10 +1,19 @@
 ---
+name: finalrun-update-test
 description: Update existing FinalRun test prompts when code changes break them
 ---
 
 # FinalRun Test Update
 
 Update existing tests via MCP tools **only when code changes break them**. Update in place, preserve intent.
+
+## MCP Preflight
+
+Before updating tests:
+
+1. Run `ping`.
+2. If ping fails due to missing MCP setup or command errors, run the `finalrun:install-mcp` workflow first.
+3. Resume this workflow only after MCP is healthy.
 
 ## Critical Rules
 

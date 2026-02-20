@@ -10,6 +10,14 @@ description: >
 
 Orchestrate FinalRun MCP tools to create, manage, and run mobile app tests.
 
+## MCP Preflight
+
+Before any test operation:
+
+1. Run `ping`.
+2. If ping fails due to missing MCP setup or command errors, run the `finalrun:install-mcp` workflow first.
+3. Resume this workflow only after MCP is healthy.
+
 ## Core Concepts
 
 - **Test**: A single automated flow (one scenario).
@@ -19,7 +27,7 @@ Orchestrate FinalRun MCP tools to create, manage, and run mobile app tests.
 ## Quick Start
 
 ```text
-1. ping
+1. ping (if fails, run finalrun:install-mcp)
 2. create_test(name, prompt)
 3. list_supported_devices()
 4. available_apps()            # required, select appId + appUploadId
@@ -119,5 +127,5 @@ Use `available_apps` response to get valid pairs.
 
 ## References
 
-- For step-by-step examples: [workflows.md](../references/workflows.md)
-- For tool schemas and response fields: [tool-reference.md](../references/tool-reference.md)
+- For step-by-step examples: [workflows.md](references/workflows.md)
+- For tool schemas and response fields: [tool-reference.md](references/tool-reference.md)
