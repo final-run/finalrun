@@ -117,7 +117,14 @@ Args: {}
 ```
 → Note requirementIds for Pixel 7 and iPhone 15.
 
-**4. Run the suite**
+**4. Get app mapping**
+```json
+Tool: available_apps
+Args: {}
+```
+→ Note the `appId` and `appUploadId`.
+
+**5. Run the suite**
 ```json
 Tool: run_test_suite_by_name_on_devices
 Args: {
@@ -125,7 +132,8 @@ Args: {
   "devices": [
     { "cloudRequirementId": "<pixel7-id>" },
     { "cloudRequirementId": "<iphone15-id>" }
-  ]
+  ],
+  "appMapping": { "<appId>": "<appUploadId>" }
 }
 ```
 
@@ -205,4 +213,48 @@ Args: {
   "appName": "MyNewApp",
   "filePath": "/absolute/path/to/build/app.apk"
 }
+```
+
+---
+
+## 7. Run a Test Locally
+
+> _"Run the Login Test on my connected Pixel device."_
+
+### Steps
+
+**1. Verify connectivity**
+```json
+Tool: ping
+Args: {}
+```
+
+**2. Discover local devices**
+```json
+Tool: list_local_devices
+Args: {}
+```
+→ Find the target device, note its `uuid`.
+
+**3. Get app mapping**
+```json
+Tool: available_apps
+Args: { "search": "MyApp" }
+```
+→ Note the `appId` and `appUploadId`.
+
+**4. Run the test locally**
+```json
+Tool: run_test_locally
+Args: {
+  "testName": "Login Test",
+  "deviceUUID": "<device-uuid>",
+  "appMapping": { "<appId>": "<appUploadId>" }
+}
+```
+
+To stop a running local test:
+```json
+Tool: stop_local_test_run
+Args: { "testRunId": "<test-run-id>" }
 ```

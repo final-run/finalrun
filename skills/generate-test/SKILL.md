@@ -39,13 +39,11 @@ Read relevant source files to understand the user-facing functionality:
 - Identify all pages/screens involved
 - Map out user flows and interactions
 - Note form fields, buttons, navigation paths, and conditional states
-- Identify the mobile platform (`Android` or `IOS`)
 
 ### Step 2 — Plan the Tests
 
 For each user flow identified, plan a test with:
 - **Name**: A clear, user-action description (e.g. "User filters products by price range")
-- **Platform**: `Android` or `IOS`
 - **Prompt**: Natural-language instructions for the AI agent executing on a real device
 
 #### Writing Good Prompts
@@ -95,7 +93,6 @@ Use MCP tool: create_test
 Arguments:
   name: "<test name from spec>"
   prompt: "<full prompt from spec>"
-  mobilePlatform: "Android"  # or "IOS"
 ```
 
 The tool will return the test ID upon success. Keep track of all created test IDs.
@@ -156,7 +153,6 @@ Arguments:
 - [ ] Existing tests checked via `list_tests` — no duplicates
 - [ ] Each test name describes a user action (not implementation detail)
 - [ ] Prompts are specific, sequential, and include verification steps
-- [ ] `mobilePlatform` set correctly for each test
 - [ ] Tests created via `create_test`
 - [ ] Tests organized into a folder via `create_folder` + `bulk_move`
 - [ ] Suite created via `create_test_suite` if multiple related tests

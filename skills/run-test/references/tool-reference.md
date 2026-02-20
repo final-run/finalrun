@@ -261,3 +261,42 @@ Resolve one test suite by name, create cloud test runs per device target, and st
 Matching guidance:
 - Prefer exact names to avoid unintended close matches.
 - If multiple candidates look similar, call `list_test_suites(search=...)` and ask the user to confirm the target before running.
+
+---
+
+## Local Runs
+
+### `list_local_devices`
+Discover locally-connected Android emulators/devices and iOS simulators.
+Returns UUID, name, platform, and status for each device.
+
+| Param | Type | Required | Notes |
+|---|---|---|---|
+| `refresh` | string | No | `"true"` to force-refresh the device list |
+
+### `run_test_locally`
+Run a test by name on a locally-connected device. Creates a TestRun on the backend (runOn=local), then executes via LocalTestRunner.
+
+| Param | Type | Required | Notes |
+|---|---|---|---|
+| `testName` | string | Yes | Test name to resolve (exact/close match) |
+| `deviceUUID` | string | Yes | Target device UUID from `list_local_devices` |
+| `appMapping` | object | No | Map: `{ appId: appUploadId }`. Use `available_apps` to get IDs. Required for tests that use an app |
+| `platform` | string | No | Optional filter when resolving test by name |
+
+### `run_test_suite_locally`
+Run a test suite by name on a locally-connected device. Creates a TestRun on the backend (runOn=local), then executes via LocalTestRunner.
+
+| Param | Type | Required | Notes |
+|---|---|---|---|
+| `testSuiteName` | string | Yes | Test suite name to resolve (exact/close match) |
+| `deviceUUID` | string | Yes | Target device UUID from `list_local_devices` |
+| `appMapping` | object | No | Map: `{ appId: appUploadId }`. Use `available_apps` to get IDs. Required for tests that use an app |
+
+### `stop_local_test_run`
+Stop an in-progress local test run.
+
+| Param | Type | Required | Notes |
+|---|---|---|---|
+| `testRunId` | string | Yes | ID of the test run to stop |
+

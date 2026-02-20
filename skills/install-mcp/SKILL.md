@@ -39,6 +39,28 @@ finalrun-dev-mcp --help
 4. If command is not found, reload shell profile (`source ~/.zshrc` or equivalent) and retry.
 5. Add IDE MCP config:
 
+**Cursor** — create or update `.cursor/mcp.json` in the project root (or globally):
+
+```json
+{
+  "mcpServers": {
+    "finalrun-dev": {
+      "command": "finalrun-dev-mcp"
+    }
+  }
+}
+```
+
+**Claude Code** — run:
+
+```bash
+claude mcp add --transport stdio finalrun-dev -- finalrun-dev-mcp
+```
+
+Verify with `claude mcp list` or `/mcp` inside Claude Code.
+
+**Windsurf / Claude Desktop** — add to MCP settings:
+
 ```json
 {
   "mcpServers": {
@@ -50,6 +72,13 @@ finalrun-dev-mcp --help
 ```
 
 6. Run a ping check from the IDE assistant.
+
+## API Key
+
+- The installer prompts for an API key interactively.
+- If using `--no-prompt`, pass `--api-key <key>` or edit `~/.finalrun/dev-mcp/config` manually.
+- Get your API key from [FinalRun Dashboard](https://studio.finalrun.app) → Account → API Key.
+- The wrapper reads the key from config at runtime; no need to pass it in IDE MCP config.
 
 ## Config and Flags
 

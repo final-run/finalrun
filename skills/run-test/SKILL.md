@@ -1,14 +1,15 @@
 ---
 name: finalrun-test-runner
 description: >
-  Run mobile app tests on cloud devices via the FinalRun MCP server.
+  Run mobile app tests on cloud or local devices via the FinalRun MCP server.
   Use when: (1) creating/managing AI-goal tests, (2) uploading app binaries,
-  (3) running tests or suites on cloud devices, (4) bulk update/delete tasks.
+  (3) running tests or suites on cloud devices, (4) running tests on local devices,
+  (5) bulk update/delete tasks.
 ---
 
 # FinalRun Test Runner
 
-Orchestrate FinalRun MCP tools to create, manage, and run mobile app tests.
+Orchestrate FinalRun MCP tools to create, manage, and run mobile app tests on cloud or local devices.
 
 ## MCP Preflight
 
@@ -73,7 +74,9 @@ Then follow:
 - **Create + Run**: `ping` -> `create_test` -> `list_supported_devices` -> `available_apps` -> `run_test_by_name_on_devices`
 - **Upload + Run (Existing App)**: `ping` -> `create_app_version` -> `create_test` -> `list_supported_devices` -> `run_test_by_name_on_devices`
 - **Upload + Run (New App)**: `ping` -> `create_app` -> `create_app_version` -> `create_test` -> `list_supported_devices` -> `run_test_by_name_on_devices`
-- **Suite Run**: `ping` -> `list_test_suites` -> `list_supported_devices` -> `run_test_suite_by_name_on_devices`
+- **Suite Run**: `ping` -> `list_test_suites` -> `list_supported_devices` -> `available_apps` -> `run_test_suite_by_name_on_devices`
+- **Local Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_locally`
+- **Local Suite Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_suite_locally`
 - **Bulk Update Tests**: `update_tests_by_name` (preview) -> `update_tests_by_name` (confirm)
 - **Bulk Delete Tests**: `delete_tests_by_name` (preview) -> `delete_tests_by_name` (confirm)
 - **Bulk Update Suites**: `update_test_suites_by_name` (preview) -> `update_test_suites_by_name` (confirm)

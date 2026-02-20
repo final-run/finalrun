@@ -39,3 +39,11 @@ Installer appends `~/.finalrun/bin` to profile based on shell:
 - bash: `~/.bash_profile` or `~/.bashrc`
 - fish: `~/.config/fish/config.fish`
 - fallback: `~/.profile`
+
+## IDE MCP Config Locations
+
+- **Cursor**: `.cursor/mcp.json` in project root (project-level) or `~/.cursor/mcp.json` (global)
+- **Claude Code**: managed via `claude mcp add` CLI command
+- **Windsurf**: MCP settings in IDE preferences
+- **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+

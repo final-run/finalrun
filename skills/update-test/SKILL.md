@@ -129,7 +129,6 @@ Arguments:
 
 **What you MAY update (only if necessary):**
 - `name` — If the scope fundamentally changed
-- `mobilePlatform` — If platform target changed
 
 ### Step 5 — Delete Obsolete Tests (If Needed)
 

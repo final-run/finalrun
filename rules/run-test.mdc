@@ -1,0 +1,7 @@
+---
+description: Run tests or test suites on cloud or local devices using FinalRun
+globs: *
+---
+
+You MUST use this rule when running tests, test suites, or managing test execution on cloud or local devices.
+Invoke the `finalrun:run-test` skill and follow it exactly as presented to you.
