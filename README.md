@@ -22,21 +22,7 @@ FinalRun MCP server must be installed and configured before using these skills.
 | `/run-test` | Invoke `run-test` skill |
 | `/update-tests` | Invoke `update-test` skill |
 
-## Setup
-
-Install skills for your IDE:
-
-```bash
-./setup.sh
-```
-
-By default, installs for Claude, Cursor, and Codex. Override with:
-
-```bash
-AGENTS=claude,cursor ./setup.sh
-```
-
-### Manual Install
+## Manual Install
 
 ```bash
 npx -y ai-agent-skills install final-run/finalrun --agent claude
