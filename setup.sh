@@ -3,6 +3,7 @@ set -euo pipefail
 
 SKILLS_REPO="${SKILLS_REPO:-final-run/finalrun}"
 AGENTS_CSV="${AGENTS:-claude,cursor,codex}"
+MCP_INSTALL_URL="${MCP_INSTALL_URL:-get-mcp-dev.finalrun.app/install-dev.sh}"
 
 print_header() {
   echo ""
@@ -16,9 +17,17 @@ require_cmd() {
   fi
 }
 
+install_mcp() {
+  print_header "Install FinalRun MCP server"
+  require_cmd curl
+
+  echo "Downloading and running MCP installer from: ${MCP_INSTALL_URL}"
+  curl -fsSL "${MCP_INSTALL_URL}" | bash -s -- "$@"
+}
+
 install_skills() {
   print_header "Install FinalRun skills"
-  local npx_checked=false
+  require_cmd npx
 
   IFS=',' read -r -a agents <<< "${AGENTS_CSV}"
   for agent in "${agents[@]}"; do
@@ -27,32 +36,18 @@ install_skills() {
     if [[ -z "$trimmed" ]]; then
       continue
     fi
-    if [[ "$trimmed" == "claude" ]]; then
-      if command -v claude >/dev/null 2>&1; then
-        echo "Installing skills for agent: claude (claude plugin add)"
-        claude plugin add "github:${SKILLS_REPO}" || true
-      else
-        echo "Skipped Claude skills install: claude CLI not found."
-        echo "Run manually:"
-        echo "  claude plugin add github:${SKILLS_REPO}"
-      fi
-      continue
-    fi
-
-    if [[ "$npx_checked" == "false" ]]; then
-      require_cmd npx
-      npx_checked=true
-    fi
     echo "Installing skills for agent: $trimmed"
     npx -y ai-agent-skills install "${SKILLS_REPO}" --agent "$trimmed"
   done
 }
 
 main() {
+  install_mcp "$@"
   install_skills
 
   print_header "Done"
-  echo "If needed, restart your IDE so skills are picked up."
+  echo "FinalRun MCP server and skills installed."
+  echo "If needed, restart your IDE so skills and MCP are picked up."
 }
 
 main "$@"

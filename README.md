@@ -5,7 +5,6 @@ AI skills for [FinalRun](https://finalrun.app) — manage and run mobile app tes
 ## Prerequisites
 
 FinalRun MCP server must be installed and configured before using these skills.
-Get your API key from [FinalRun Studio](https://studio.finalrun.app) or Profile > API Key in the FinalRun macOS app.
 
 ## Skills
 
@@ -39,14 +38,8 @@ AGENTS=claude,cursor ./setup.sh
 
 ### Manual Install
 
-**Claude Code:**
-
 ```bash
-claude plugin add github:final-run/finalrun
-```
-
-**Cursor / Other agents:**
-
-```bash
+npx -y ai-agent-skills install final-run/finalrun --agent claude
 npx -y ai-agent-skills install final-run/finalrun --agent cursor
+npx -y ai-agent-skills install final-run/finalrun --agent codex
 ```
