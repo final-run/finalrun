@@ -1,1 +1,4 @@
 .idea/
+.cursor/generate-test/.skill-meta.json
+.cursor/run-test/.skill-meta.json
+.cursor/update-test/.skill-meta.json

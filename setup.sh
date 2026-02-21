@@ -47,7 +47,22 @@ main() {
 
   print_header "Done"
   echo "FinalRun MCP server and skills installed."
+  echo ""
+  echo "Add this to your IDE's MCP config (Cursor / Claude Desktop / Windsurf):"
+  echo ""
+  echo '  {'
+  echo '    "mcpServers": {'
+  echo '      "finalrun": {'
+  echo '        "command": "finalrun-mcp",'
+  echo '        "args": ["--api-key", "YOUR_API_KEY"]'
+  echo '      }'
+  echo '    }'
+  echo '  }'
+  echo ""
+  echo "Then ask your AI assistant: \"Ping FinalRun\""
+  echo ""
   echo "If needed, restart your IDE so skills and MCP are picked up."
 }
 
 main "$@"
+
