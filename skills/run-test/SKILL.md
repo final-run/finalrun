@@ -69,14 +69,20 @@ Then follow:
    - Call `create_app(name, appKnowledge?)` -> get `appId`
    - Call `create_app_version(appName, filePath)` to upload first version
 
+## Local Run Prerequisites
+
+Before executing a **Local Test Run** or **Local Test Suite Run**:
+- **Android**: Ensure `adb` is installed. Verify by running `which adb`. If it is not present, you can install it via Homebrew (`brew install android-platform-tools`) or by installing [Android Studio](https://developer.android.com/studio).
+- **iOS**: Ensure `xcrun` is available (applicable only for mac). Verify by running `which xcrun`. If it is not present, you can install the Xcode Command Line Tools by running `xcode-select --install` in your terminal.
+
 ## Core Workflows
 
 - **Create + Run**: `ping` -> `create_test` -> `list_supported_devices` -> `available_apps` -> `run_test_by_name_on_devices`
 - **Upload + Run (Existing App)**: `ping` -> `create_app_version` -> `create_test` -> `list_supported_devices` -> `run_test_by_name_on_devices`
 - **Upload + Run (New App)**: `ping` -> `create_app` -> `create_app_version` -> `create_test` -> `list_supported_devices` -> `run_test_by_name_on_devices`
-- **Suite Run**: `ping` -> `list_test_suites` -> `list_supported_devices` -> `available_apps` -> `run_test_suite_by_name_on_devices`
-- **Local Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_locally`
-- **Local Suite Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_suite_locally`
+- **Test Suite Run**: `ping` -> `list_test_suites` -> `list_supported_devices` -> `available_apps` -> `run_test_suite_by_name_on_devices`
+- **Local Test Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_locally`
+- **Local Test Suite Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_suite_locally`
 - **Bulk Update Tests**: `update_tests_by_name` (preview) -> `update_tests_by_name` (confirm)
 - **Bulk Delete Tests**: `delete_tests_by_name` (preview) -> `delete_tests_by_name` (confirm)
 - **Bulk Update Suites**: `update_test_suites_by_name` (preview) -> `update_test_suites_by_name` (confirm)
