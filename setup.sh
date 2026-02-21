@@ -22,7 +22,7 @@ install_mcp() {
   require_cmd curl
 
   echo "Downloading and running MCP installer from: ${MCP_INSTALL_URL}"
-  curl -fsSL "${MCP_INSTALL_URL}" | bash -s -- --skip-next-steps "$@"
+  curl -fsSL "${MCP_INSTALL_URL}" | bash -s -- "$@"
 }
 
 install_skills() {
