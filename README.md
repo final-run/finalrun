@@ -2,6 +2,11 @@
 
 AI skills for [FinalRun](https://finalrun.app) — manage and run mobile app tests from your AI coding assistant.
 
+## Prerequisites
+
+FinalRun MCP server must be installed and configured before using these skills.
+Get your API key from [FinalRun Studio](https://studio.finalrun.app) or Profile > API Key in the FinalRun macOS app.
+
 ## Skills
 
 | Skill | What it does |
@@ -9,7 +14,6 @@ AI skills for [FinalRun](https://finalrun.app) — manage and run mobile app tes
 | `generate-test` | Generate test cases from your codebase and upload to FinalRun |
 | `run-test` | Run tests/suites on cloud or local devices |
 | `update-test` | Update existing test prompts when code changes break them |
-| `install-mcp` | Install, update, or troubleshoot FinalRun MCP server |
 
 ## Commands
 
@@ -18,72 +22,31 @@ AI skills for [FinalRun](https://finalrun.app) — manage and run mobile app tes
 | `/generate-tests` | Invoke `generate-test` skill |
 | `/run-test` | Invoke `run-test` skill |
 | `/update-tests` | Invoke `update-test` skill |
-| `/install-mcp` | Invoke `install-mcp` skill |
 
 ## Setup
 
-### 1. Install FinalRun MCP Server
+Install skills for your IDE:
 
 ```bash
-curl -fsSL https://get-mcp-dev.finalrun.app/install-dev.sh | bash
+./setup.sh
 ```
 
-Or ask your AI assistant: _"Install FinalRun MCP"_ (uses the `install-mcp` skill).
+By default, installs for Claude, Cursor, and Codex. Override with:
 
-### 2. Configure Your IDE
+```bash
+AGENTS=claude,cursor ./setup.sh
+```
+
+### Manual Install
 
 **Claude Code:**
 
 ```bash
-# Add MCP server
-claude mcp add --transport stdio finalrun-dev -- finalrun-dev-mcp
-
-# Install skills plugin
-claude plugin add github:AshishYUO/finalrun-skills
+claude plugin add github:final-run/finalrun
 ```
 
-**Cursor:**
-
-1. Add MCP server — create `.cursor/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "finalrun-dev": {
-      "command": "finalrun-dev-mcp"
-    }
-  }
-}
-```
-
-2. Copy rules to your project:
+**Cursor / Other agents:**
 
 ```bash
-cp -r <path-to-finalrun-skills>/rules/*.mdc .cursor/rules/
+npx -y ai-agent-skills install final-run/finalrun --agent cursor
 ```
-
-**Windsurf / Claude Desktop:**
-
-Add to MCP settings:
-
-```json
-{
-  "mcpServers": {
-    "finalrun-dev": {
-      "command": "finalrun-dev-mcp"
-    }
-  }
-}
-```
-
-### 3. Verify
-
-Ask your AI assistant: _"Ping FinalRun"_
-
-You should see your organization name.
-
-## API Key
-
-Get your API key from [FinalRun Dashboard](https://studio.finalrun.app) → Account → API Key.
-
-The installer prompts for the key during setup. It's stored in `~/.finalrun/dev-mcp/config` and read automatically by the wrapper command.

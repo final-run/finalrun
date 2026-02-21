@@ -12,7 +12,7 @@ Update existing tests via MCP tools **only when code changes break them**. Updat
 Before updating tests:
 
 1. Run `ping`.
-2. If ping fails due to missing MCP setup or command errors, run the `finalrun:install-mcp` workflow first.
+2. If ping fails, the FinalRun MCP server may not be installed or configured. Ask the user to verify their MCP setup.
 3. Resume this workflow only after MCP is healthy.
 
 ## Critical Rules

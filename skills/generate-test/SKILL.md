@@ -12,7 +12,7 @@ Generate user-focused test specifications for mobile/web apps and upload them to
 Before generating tests:
 
 1. Run `ping`.
-2. If ping fails due to missing MCP setup or command errors, run the `finalrun:install-mcp` workflow first.
+2. If ping fails, the FinalRun MCP server may not be installed or configured. Ask the user to verify their MCP setup.
 3. Continue test generation only after MCP is healthy.
 
 ## Core Principles

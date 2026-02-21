@@ -1,7 +1,0 @@
----
-description: Install, update, or troubleshoot FinalRun MCP setup
-globs: *
----
-
-You MUST use this rule when the user asks to install, update, configure, or troubleshoot FinalRun MCP setup.
-Invoke the `finalrun:install-mcp` skill and follow it exactly as presented to you.
