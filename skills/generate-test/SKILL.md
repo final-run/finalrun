@@ -1,11 +1,11 @@
 ---
 name: finalrun-generate-test
-description: Generate test cases for mobile apps and upload them to FinalRun cloud
+description: Generate test cases for native mobile apps and mobile web apps (accessed via mobile browsers), and upload them to the FinalRun cloud.
 ---
 
 # FinalRun Test Generation
 
-Generate user-focused test specifications for mobile/web apps and upload them to FinalRun cloud via MCP tools.
+Generate user-focused test specifications for native mobile apps and mobile web apps, and upload them to the FinalRun cloud via MCP tools.
 
 ## MCP Preflight
 
@@ -18,13 +18,14 @@ Before generating tests:
 ## Core Principles
 
 **Test user-facing functionality only:**
-- ✅ User interactions, workflows, and navigation
-- ✅ End-to-end page functionality
-- ✅ Form validation, search, filters, and interactive features
-- ❌ APIs, endpoints, or server logic
-- ❌ Third-party auth (OAuth, Google, Facebook, GitHub)
-- ❌ Metadata, SEO elements, or HTML structure
-- ❌ Non-existent functionality
+- ✅ User interactions, gestures, and navigation (tap, swipe, scroll, back navigation)
+- ✅ End-to-end screen and feature functionality
+- ✅ Form input, validation, search, filters, and interactive UI elements
+- ✅ Mobile-specific behaviors (keyboard input, screen transitions, orientation changes)
+- ❌ APIs, backend endpoints, or server-side logic
+- ❌ Third-party authentication providers (OAuth, Google, Facebook, GitHub)
+- ❌ App internals, logs, background services, or implementation details
+- ❌ Non-existent screens or functionality not accessible to users
 
 **Quality over quantity:**
 - Maximum 5 tests per feature (adjust to actual complexity)
@@ -39,12 +40,22 @@ Read relevant source files to understand the user-facing functionality:
 - Identify all pages/screens involved
 - Map out user flows and interactions
 - Note form fields, buttons, navigation paths, and conditional states
+- Refer `Test user-facing functionality` section
 
 ### Step 2 — Plan the Tests
 
 For each user flow identified, plan a test with:
 - **Name**: A clear, user-action description (e.g. "User filters products by price range")
 - **Prompt**: Natural-language instructions for the AI agent executing on a real device
+
+### Step 3 — Review and Confirm the Test Plan
+
+Present the planned tests to the user for review and confirmation:
+- Display all planned tests with their **Name** and **Prompt**
+- Allow the user to confirm, edit, add, or remove tests
+- Incorporate the user’s feedback and finalize the test plan before execution
+- Do not execute or upload tests until the user confirms the plan
+
 
 #### Writing Good Prompts
 
@@ -63,7 +74,7 @@ The prompt drives the entire test execution. Guidelines:
 
 **Prompt:**
 ```
-Open the app and navigate to the Products page.
+Navigate to the Products page.
 Tap on the filter icon in the top-right corner.
 Select the price range $50-$100 using the slider.
 Choose "Electronics" from the category dropdown.
@@ -84,29 +95,17 @@ Arguments: { "search": "<feature keyword>" }
 
 Skip any test that duplicates existing coverage.
 
-### Step 4 — Create Tests in FinalRun
+### Step 4 — Set Up the Folder
 
-For each planned test, create it via MCP:
-
-```
-Use MCP tool: create_test
-Arguments:
-  name: "<test name from spec>"
-  prompt: "<full prompt from spec>"
-```
-
-The tool will return the test ID upon success. Keep track of all created test IDs.
-
-### Step 5 — Organize into a Folder
-
-Group the created tests into a folder for organization. First, check if a suitable folder already exists:
+Before creating tests, ensure a folder exists to organize them. First, check if a suitable folder already exists:
 
 ```
 Use MCP tool: browse_folder
 Arguments: {}  # browses root level
 ```
 
-If no matching folder exists, create one:
+- **If a matching folder exists** — note its `folderId` and proceed to Step 5.
+- **If no matching folder exists** — create one:
 
 ```
 Use MCP tool: create_folder
@@ -116,53 +115,84 @@ Arguments:
   # parentFolderId: "<id>"  # optional, for nesting under an existing folder
 ```
 
-Then move all created tests into the folder:
+Note the returned `folderId` for use in the next step.
+
+### Step 5 — Create Tests Inside the Folder
+
+For each planned test, create it directly inside the folder from Step 4:
 
 ```
-Use MCP tool: bulk_move
+Use MCP tool: create_test
 Arguments:
-  targetFolderId: "<folder-id-from-above>"
-  testIds: ["<test-id-1>", "<test-id-2>", ...]
+  name: "<test name from spec>"
+  prompt: "<full prompt from spec>"
+  folderId: "<folder-id-from-step-4>"
 ```
 
-### Step 6 — Group into a Test Suite (Optional)
+The tool will return the test ID upon success. Keep track of all created test IDs.
 
-If multiple related tests were created, also group them into a test suite for execution:
+### Step 6 — Group into a Test Suite
+
+A test suite is an **ordered sequence of tests** that run end-to-end on a device. To test a feature, the suite must include any **prerequisite tests** (e.g., login, navigation) that set up the required state, followed by the feature tests themselves — all in execution order.
+
+#### 6a. Identify prerequisite tests
+
+Determine what tests must run before the feature tests. For example, to test a Product Details page you need: 
+
+1. **Login** — authenticate into the app
+2. **Navigate to product** — search for a product and open the details page
+3. **Product details tests** — the actual feature tests created in Step 5
+
+#### 6b. Check if prerequisite tests exist
+
+Search for each prerequisite test:
+
+```
+Use MCP tool: list_tests
+Arguments: { "search": "<prerequisite keyword>" }
+```
+
+- **If the test exists** — note its test ID.
+- **If the test does not exist** — create it using `create_test` (with the appropriate `folderId`), then note the returned test ID.
+
+#### 6c. Create the test suite in order
+
+Assemble all test IDs — prerequisites first, then feature tests — in execution order:
 
 ```
 Use MCP tool: create_test_suite
 Arguments:
-  name: "<Feature Name> Regression"
+  name: "<Feature Name>"
   description: "<Brief description of what the suite covers>"
   autoSelectPlatform: "android"  # or "ios"
+  testIds: ["<prerequisite-test-id-1>", "<prerequisite-test-id-2>", ..., "<feature-test-id-1>", "<feature-test-id-2>", ...]
 ```
-
-
 
 ## Test Prioritization
 
-1. **Critical paths** — login, checkout, data submission
-2. **Interactive features** — search, sorting, filtering
-3. **Form validation** — required fields, error messages
-4. **Navigation flows** — screen transitions, back behavior
-5. **Conditional UI** — loading, empty, error states
+1. **Critical user flows** — onboarding, login, checkout, submissions
+2. **Interactive features and gestures** — tap, swipe, scroll, search, filters
+3. **Form input and validation** — errors, required fields, keyboard interaction
+4. **Navigation flows** — screen transitions, back navigation, tab switching
+5. **Conditional UI states** — loading, empty, error, success states
+6. **Mobile-specific behaviors** — orientation changes, keyboard, dynamic UI
 
 ## Quick Checklist
 
 - [ ] Feature analyzed, all user flows mapped
 - [ ] Existing tests checked via `list_tests` — no duplicates
+- [ ] Folder set up via `browse_folder` / `create_folder`
 - [ ] Each test name describes a user action (not implementation detail)
 - [ ] Prompts are specific, sequential, and include verification steps
-- [ ] Tests created via `create_test`
-- [ ] Tests organized into a folder via `create_folder` + `bulk_move`
-- [ ] Suite created via `create_test_suite` if multiple related tests
+- [ ] Tests created inside the folder via `create_test` with `folderId`
+- [ ] Suite created via `create_test_suite` with prerequisite + feature tests in order
 
 ## Anti-Patterns
 
 ❌ **Vague prompts**: "Test the login" → No verification, no specifics
-✅ **Good prompts**: "Open app, tap Login, enter user@test.com and password123, tap Submit, verify home screen loads with welcome message"
+✅ **Good prompts**: "Tap Login, enter user@test.com and password123, tap Submit, verify home screen loads with welcome message"
 
-❌ **Testing implementation**: "Verify Redux store updates" → Backend/state concern
+❌ **Testing implementation**: "Verify store updates" → Backend/state concern
 ✅ **Testing user outcome**: "Verify the item count in the cart badge updates to 2"
 
 ❌ **One mega-test**: A single test covering 15 different features
