@@ -26,6 +26,7 @@ Before generating tests:
 - ❌ Third-party authentication providers (OAuth, Google, Facebook, GitHub)
 - ❌ App internals, logs, background services, or implementation details
 - ❌ Non-existent screens or functionality not accessible to users
+- ❌ Relaunching or closing/reopening the app mid-test or mid-suite
 
 **Quality over quantity:**
 - Maximum 5 tests per feature (adjust to actual complexity)
@@ -197,3 +198,6 @@ Arguments:
 
 ❌ **One mega-test**: A single test covering 15 different features
 ✅ **Focused tests**: Each test covers one user workflow (3-8 steps)
+
+❌ **App relaunch mid-suite**: "Close the app and reopen it, then navigate to settings"
+✅ **Continuous flow**: Each test in a suite continues from where the previous test left off

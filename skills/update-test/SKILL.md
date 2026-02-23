@@ -21,6 +21,7 @@ Before updating tests:
 2. **NEVER modify code** — Only read code, only update tests via MCP
 3. **If test still valid, do nothing** — Don't fix what works
 4. **Update in place** — Same test, same folder — preserve name unless scope fundamentally changed
+5. **No app relaunch** — Never include "close app", "relaunch app", or "reopen app" steps in prompts
 
 ## Your Only Job
 
