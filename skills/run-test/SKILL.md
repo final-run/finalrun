@@ -2,14 +2,13 @@
 name: finalrun-test-runner
 description: >
   Run mobile app tests on cloud or local devices via the FinalRun MCP server.
-  Use when: (1) creating/managing AI-goal tests, (2) uploading app binaries,
-  (3) running tests or suites on cloud devices, (4) running tests on local devices,
-  (5) bulk update/delete tasks.
+  Use when: (1) uploading app binaries, (2) running tests or suites on cloud devices,
+  (3) running tests on local devices.
 ---
 
 # FinalRun Test Runner
 
-Orchestrate FinalRun MCP tools to create, manage, and run mobile app tests on cloud or local devices.
+Orchestrate FinalRun MCP tools to run mobile app tests on cloud or local devices.
 
 ## MCP Preflight
 
@@ -22,25 +21,28 @@ Before any test operation:
 ## Core Concepts
 
 - **Test**: A single automated flow (one scenario).
-- **Test Suite**: A group of one or more tests executed together.
+- **Test Suite**: An ordered group of tests executed together on a device.
 - **Test Runs**: Historical execution records of tests or suites that already ran.
+
+## Your Only Job
+
+1. **Find** the test or suite to run
+2. **Select** the target device(s) — cloud or local
+3. **Map** the app binary — use an existing app, or upload a new one if not available
+4. **Confirm** the run plan with the user
+5. **Execute** the test run
+
+> For creating tests, see `generate-test`. For updating or deleting tests, see `update-test`.
 
 ## Quick Start
 
 ```text
-1. ping (verify MCP is healthy)
-2. create_test(name, prompt)
-3. list_supported_devices()
-4. available_apps()            # required, select appId + appUploadId
-5. run_test_by_name_on_devices(testName, devices, appMapping)
+1. ping                                    # verify MCP is healthy
+2. list_tests / list_test_suites           # find the test or suite to run
+3. list_supported_devices()                # pick target device(s)
+4. available_apps()                        # select appId + appUploadId
+5. run_test_by_name_on_devices / run_test_suite_by_name_on_devices
 ```
-
-## Required Inputs
-
-- **Create Test**: `name`, `prompt`
-- **Run Test**: test + `appMapping` + one or more compatible devices
-- **Create Test Suite**: suite `name` (add tests afterward using `update_test_suites_by_name` with `testIds`)
-- **Run Test Suite**: suite + `appMapping` + one or more compatible devices
 
 ## Platform Compatibility Rule (Strict)
 
@@ -49,12 +51,135 @@ Before any test operation:
 - Never map Android app to iOS device, or iOS app to Android device
 - For `platform` and `autoSelectPlatform` parameters, use lowercase values: `android` or `ios`
 
+## Workflow Steps
+
+### Step 1 — Find the Test or Suite
+
+Search for the test or suite to run:
+
+```
+Use MCP tool: list_tests
+Arguments: { "search": "<test name keyword>" }
+```
+
+Or for suites:
+
+```
+Use MCP tool: list_test_suites
+Arguments: { "search": "<suite name keyword>" }
+```
+
+If the test or suite doesn't exist, follow the `generate-test` workflow to create it first.
+
+### Step 2 — Select Target Devices
+
+**Cloud devices:**
+
+```
+Use MCP tool: list_supported_devices
+Arguments: { "platform": "android" }  # or "ios"
+```
+
+Note the `requirementId` for the target device(s).
+
+**Local devices:**
+
+```
+Use MCP tool: list_local_devices
+Arguments: {}
+```
+
+Note the `uuid` for the target device. Ensure local prerequisites are met (see Local Run Prerequisites section).
+
+### Step 3 — Resolve App Mapping
+
+Search for the app binary to use:
+
+```
+Use MCP tool: available_apps
+Arguments: { "search": "<app name>", "platform": "android" }  # or "ios"
+```
+
+- **If app exists** — select the appropriate `appId` + `appUploadId` pair
+- **If no app is available** — upload a new binary following the Upload Routing Rule below
+
+**Platform inference:**
+- **If app has uploads for only one platform** — platform is already determined, select matching devices automatically without asking the user
+- **If app has uploads for both platforms** — ask the user which platform to run on
+
+Enforce platform compatibility: Android app → Android device, iOS app → iOS device.
+
+### Step 4 — Confirm the Run Plan
+
+Present the run plan to the user for confirmation:
+- Test or suite name to run
+- Target device(s) and platform
+- App binary version (appId + appUploadId)
+- Cloud or local execution
+
+Do not start the run until the user confirms the plan.
+
+### Step 5 — Execute the Run
+
+**Cloud — Single Test:**
+
+```
+Use MCP tool: run_test_by_name_on_devices
+Arguments:
+  testName: "<test name>"
+  devices: [{ "cloudRequirementId": "<requirement-id>" }]
+  appMapping: { "<appId>": "<appUploadId>" }
+```
+
+**Cloud — Test Suite:**
+
+```
+Use MCP tool: run_test_suite_by_name_on_devices
+Arguments:
+  testSuiteName: "<suite name>"
+  devices: [{ "cloudRequirementId": "<requirement-id>" }]
+  appMapping: { "<appId>": "<appUploadId>" }
+```
+
+**Local — Single Test:**
+
+```
+Use MCP tool: run_test_locally
+Arguments:
+  testName: "<test name>"
+  deviceUUID: "<device-uuid>"
+  appMapping: { "<appId>": "<appUploadId>" }
+```
+
+**Local — Test Suite:**
+
+```
+Use MCP tool: run_test_suite_locally
+Arguments:
+  testSuiteName: "<suite name>"
+  deviceUUID: "<device-uuid>"
+  appMapping: { "<appId>": "<appUploadId>" }
+```
+
+To stop a running local test:
+
+```
+Use MCP tool: stop_local_test_run
+Arguments: { "testRunId": "<test-run-id>" }
+```
+
+## Local Run Prerequisites
+
+Before executing a **Local Test Run** or **Local Test Suite Run**:
+- **Android**: Ensure `adb` is installed. Verify by running `which adb`. If not present, install via Homebrew (`brew install android-platform-tools`) or [Android Studio](https://developer.android.com/studio).
+- **iOS**: Ensure `xcrun` is available (mac only). Verify by running `which xcrun`. If not present, run `xcode-select --install`.
+
 ## Upload Routing Rule
 
 When user asks to upload a new build, always ask:
 
-- “Should this upload go to an existing app or a new app container?”
-- “Confirm platform: Android or iOS?”
+- "Should this upload go to an existing app or a new app container?"
+- "Confirm platform: Android or iOS?"
 
 Then follow:
 
@@ -68,42 +193,6 @@ Then follow:
    - Confirm platform (`android` or `ios`)
    - Call `create_app(name, appKnowledge?)` -> get `appId`
    - Call `create_app_version(appName, filePath)` to upload first version
-
-## Local Run Prerequisites
-
-Before executing a **Local Test Run** or **Local Test Suite Run**:
-- **Android**: Ensure `adb` is installed. Verify by running `which adb`. If it is not present, you can install it via Homebrew (`brew install android-platform-tools`) or by installing [Android Studio](https://developer.android.com/studio).
-- **iOS**: Ensure `xcrun` is available (applicable only for mac). Verify by running `which xcrun`. If it is not present, you can install the Xcode Command Line Tools by running `xcode-select --install` in your terminal.
-
-## Core Workflows
-
-- **Create + Run**: `ping` -> `create_test` -> `list_supported_devices` -> `available_apps` -> `run_test_by_name_on_devices`
-- **Upload + Run (Existing App)**: `ping` -> `create_app_version` -> `create_test` -> `list_supported_devices` -> `run_test_by_name_on_devices`
-- **Upload + Run (New App)**: `ping` -> `create_app` -> `create_app_version` -> `create_test` -> `list_supported_devices` -> `run_test_by_name_on_devices`
-- **Test Suite Run**: `ping` -> `list_test_suites` -> `list_supported_devices` -> `available_apps` -> `run_test_suite_by_name_on_devices`
-- **Local Test Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_locally`
-- **Local Test Suite Run**: `ping` -> `list_local_devices` -> `available_apps` -> `run_test_suite_locally`
-- **Bulk Update Tests**: `update_tests_by_name` (preview) -> `update_tests_by_name` (confirm)
-- **Bulk Delete Tests**: `delete_tests_by_name` (preview) -> `delete_tests_by_name` (confirm)
-- **Bulk Update Suites**: `update_test_suites_by_name` (preview) -> `update_test_suites_by_name` (confirm)
-- **Bulk Delete Suites**: `delete_test_suites_by_name` (preview) -> `delete_test_suites_by_name` (confirm)
-
-## Two-Phase Confirmation Pattern
-
-For update/delete bulk actions:
-
-```text
-Step 1: Call without confirm=true -> receive preview + confirmationToken
-Step 2: Call with confirm=true + confirmationToken -> execute
-```
-
-Always show preview to user before confirm.
-
-## Device Targeting
-
-Each device target must include exactly one:
-- `cloudRequirementId`
-- `autoSelectPlatform` (`android` or `ios`)
 
 ## App Mapping
 
@@ -127,12 +216,44 @@ Also accepted:
 
 Use `available_apps` response to get valid pairs.
 
+## Device Targeting
+
+Each device target must include exactly one:
+- `cloudRequirementId`
+- `autoSelectPlatform` (`android` or `ios`)
+
+## Two-Phase Confirmation Pattern
+
+For update/delete bulk actions:
+
+```text
+Step 1: Call without confirm=true -> receive preview + confirmationToken
+Step 2: Call with confirm=true + confirmationToken -> execute
+```
+
+Always show preview to user before confirm.
+
 ## Error Recovery
 
 - Auth/connectivity issue -> call `ping`
-- “No test found matching” -> call `list_tests` with `search`
+- "No test found matching" -> call `list_tests` with `search`
 - Upload failure -> verify absolute `filePath`
 - No devices found -> verify `platform` filter and casing
+
+## Quick Checklist
+
+- [ ] MCP connectivity verified via `ping`
+- [ ] Test or suite identified via `list_tests` / `list_test_suites`
+- [ ] Target device(s) selected (cloud or local)
+- [ ] Platform compatibility verified (Android↔Android, iOS↔iOS)
+- [ ] App mapping resolved via `available_apps`
+- [ ] Run plan confirmed with user
+- [ ] Test run executed
+
+## Related Skills
+
+- **Creating tests**: See `generate-test` workflow
+- **Updating or deleting tests**: See `update-test` workflow
 
 ## References
 

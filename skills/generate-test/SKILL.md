@@ -84,7 +84,7 @@ Verify the active filter chips appear at the top of the list.
 Verify the result count updates correctly.
 ```
 
-### Step 3 — Check for Existing Tests
+### Step 4 — Check for Existing Tests
 
 Before creating tests, check what already exists:
 
@@ -95,7 +95,7 @@ Arguments: { "search": "<feature keyword>" }
 
 Skip any test that duplicates existing coverage.
 
-### Step 4 — Set Up the Folder
+### Step 5 — Set Up the Folder
 
 Before creating tests, ensure a folder exists to organize them. First, check if a suitable folder already exists:
 
@@ -104,7 +104,7 @@ Use MCP tool: browse_folder
 Arguments: {}  # browses root level
 ```
 
-- **If a matching folder exists** — note its `folderId` and proceed to Step 5.
+- **If a matching folder exists** — note its `folderId` and proceed to Step 6.
 - **If no matching folder exists** — create one:
 
 ```
@@ -117,33 +117,33 @@ Arguments:
 
 Note the returned `folderId` for use in the next step.
 
-### Step 5 — Create Tests Inside the Folder
+### Step 6 — Create Tests Inside the Folder
 
-For each planned test, create it directly inside the folder from Step 4:
+For each planned test, create it directly inside the folder from Step 5:
 
 ```
 Use MCP tool: create_test
 Arguments:
   name: "<test name from spec>"
   prompt: "<full prompt from spec>"
-  folderId: "<folder-id-from-step-4>"
+  folderId: "<folder-id-from-step-5>"
 ```
 
 The tool will return the test ID upon success. Keep track of all created test IDs.
 
-### Step 6 — Group into a Test Suite
+### Step 7 — Group into a Test Suite
 
 A test suite is an **ordered sequence of tests** that run end-to-end on a device. To test a feature, the suite must include any **prerequisite tests** (e.g., login, navigation) that set up the required state, followed by the feature tests themselves — all in execution order.
 
-#### 6a. Identify prerequisite tests
+#### 7a. Identify prerequisite tests
 
 Determine what tests must run before the feature tests. For example, to test a Product Details page you need: 
 
 1. **Login** — authenticate into the app
 2. **Navigate to product** — search for a product and open the details page
-3. **Product details tests** — the actual feature tests created in Step 5
+3. **Product details tests** — the actual feature tests created in Step 6
 
-#### 6b. Check if prerequisite tests exist
+#### 7b. Check if prerequisite tests exist
 
 Search for each prerequisite test:
 
@@ -155,7 +155,7 @@ Arguments: { "search": "<prerequisite keyword>" }
 - **If the test exists** — note its test ID.
 - **If the test does not exist** — create it using `create_test` (with the appropriate `folderId`), then note the returned test ID.
 
-#### 6c. Create the test suite in order
+#### 7c. Create the test suite in order
 
 Assemble all test IDs — prerequisites first, then feature tests — in execution order:
 

@@ -1,6 +1,6 @@
 ---
 name: finalrun-update-test
-description: Update existing FinalRun test prompts when code changes break them
+description: Update existing FinalRun test prompts when code changes break them. The tests are for native mobile apps and mobile web apps (accessed via mobile browsers).
 ---
 
 # FinalRun Test Update
@@ -20,28 +20,34 @@ Before updating tests:
 1. **Tests are natural-language AI prompts** — No selectors, no locators, no technical details
 2. **NEVER modify code** — Only read code, only update tests via MCP
 3. **If test still valid, do nothing** — Don't fix what works
-4. **Update in place** — Same test, same name, same folder
+4. **Update in place** — Same test, same folder — preserve name unless scope fundamentally changed
 
 ## Your Only Job
 
 1. **Read** the code changes
 2. **Find** the existing tests via MCP
-3. **Decide** if each test needs updating
-4. **If NO** → Do nothing
-5. **If YES** → Update only the test prompt via MCP (never touch code)
+3. **Decide** if each test needs updating (valid, outdated, or obsolete)
+4. **If all tests are still valid** → Stop here, nothing to do
+5. **Present** the update plan to the user for confirmation
+6. **Update** outdated test prompts via MCP (never touch code)
+7. **Delete** obsolete tests if features were removed
+8. **Create** new tests for new flows (via `generate-test`)
 
 ## When to Update
 
 **✅ Update if:**
 - User flow changed (added/removed/reordered steps)
 - Button or field labels changed
-- Expected behavior different (new success message, different redirect)
-- Page structure reorganized (form moved, navigation changed)
+- Expected behavior different (new success message, different screen transition, or navigation outcome)
+- Screen layout reorganized (form moved, navigation structure changed, or elements repositioned)
+- Navigation patterns changed (tab bar, back navigation, or screen hierarchy updated)
+- Interactive elements changed (gestures, input behavior, or user interaction patterns)
 
 **❌ Don't update if:**
 - Code refactored, same UI
 - Only styling changed
 - Backend changes, frontend unchanged
+- Third-party authentication flows (OAuth, Google, Facebook, GitHub)
 - **Test still accurately describes current flow**
 
 ## Natural Language Prompts
@@ -50,7 +56,7 @@ FinalRun tests use **plain language AI prompts**, not technical selectors:
 
 ✅ **Good — Natural language:**
 ```
-Open the app and navigate to the Products page.
+Navigate to the Products page.
 Enter "laptop" in the search box.
 Tap the search button.
 Select "Electronics" from the category dropdown.
@@ -74,6 +80,9 @@ Read the changed files and identify:
 - What user-facing flows were affected
 - Which UI elements changed (labels, buttons, navigation)
 - What new behavior was introduced
+- Whether any screens were added or removed
+- Changes to form validation rules or error messages
+- Whether any features were removed entirely (signals test deletion in Step 6)
 
 ### Step 2 — Find Existing Tests
 
@@ -96,13 +105,33 @@ Use MCP tool: list_tests
 Arguments: { "search": "<feature keyword>" }
 ```
 
+Also search for related test suites:
+
+```
+Use MCP tool: list_test_suites
+Arguments: { "search": "<feature keyword>" }
+```
+
 ### Step 3 — Evaluate Each Test
 
 For each test found, compare the prompt against the new code behavior:
 - **Still valid?** → Skip, do nothing
-- **Outdated?** → Needs update
+- **Outdated?** → Needs update (Step 5)
+- **Obsolete?** → Feature removed, needs deletion (Step 6)
 
-### Step 4 — Update Outdated Tests
+### Step 4 — Review and Confirm the Update Plan
+
+Present the evaluation from Step 3 to the user for review:
+- List tests that are **still valid** (no changes needed)
+- List tests that are **outdated** with the proposed updated prompt
+- List tests that are **obsolete** and will be deleted
+- List any **new tests** needed for new flows
+- Allow the user to confirm, edit, or adjust the plan
+- Incorporate the user's feedback and finalize before execution
+
+Do not execute any updates or deletions until the user confirms the plan.
+
+### Step 5 — Update Outdated Tests
 
 Update the test prompt via MCP:
 
@@ -125,12 +154,12 @@ Arguments:
 ```
 
 **What to update:**
-- `prompt` — New flow description with verification steps
+- `prompt` — New flow description with verification steps. Follow the prompt guidelines from `generate-test` — be specific, sequential, and include verification steps.
 
 **What you MAY update (only if necessary):**
 - `name` — If the scope fundamentally changed
 
-### Step 5 — Delete Obsolete Tests (If Needed)
+### Step 6 — Delete Obsolete Tests (If Needed)
 
 If a feature was removed entirely and a test is no longer relevant:
 
@@ -141,11 +170,42 @@ Arguments:
   limit: 1
 ```
 
+This will preview the match. Then confirm:
+
+```
+Use MCP tool: delete_tests_by_name
+Arguments:
+  testNameQuery: "<test name>"
+  confirm: true
+  confirmationToken: "<token-from-preview>"
+```
+
+### Step 7 — Create New Tests (If Needed)
+
+If the code change introduced a **new user flow** not covered by existing tests, create a new test inside the appropriate folder. Follow the `generate-test` workflow (Steps 5–7) for this.
+
+### Step 8 — Update Related Test Suites (If Needed)
+
+If any tests were updated, deleted, or created, check if they belong to a test suite:
+
+```
+Use MCP tool: list_test_suites
+Arguments: { "search": "<feature keyword>" }
+```
+
+Update the suite if:
+- A **deleted test** is still referenced → remove it from the suite's `testIds`
+- A **new test** was created → add it to the suite's `testIds` in the correct order
+- **Prerequisite tests** changed → update the suite order
+
+```
+Use MCP tool: update_test_suites_by_name
+Arguments:
+  testSuiteNameQuery: "<suite name>"
+  testIds: ["<updated-ordered-test-ids>"]
+```
+
 Then confirm with the returned token.
-
-### Step 6 — Create New Tests (If Needed)
-
-If the code change introduced a **new user flow** not covered by existing tests, create a new test and move it into the appropriate folder. Follow the `/generate-tests` workflow for this.
 
 ## Update Examples
 
@@ -155,7 +215,7 @@ If the code change introduced a **new user flow** not covered by existing tests,
 
 **Before prompt:**
 ```
-Open the app and navigate to checkout.
+Navigate to checkout.
 Fill in shipping address.
 Tap continue to payment.
 Enter payment details.
@@ -165,7 +225,7 @@ Verify order confirmation page displays.
 
 **After prompt:**
 ```
-Open the app and navigate to checkout.
+Navigate to checkout.
 Fill in shipping address.
 Tap continue to review.
 Review the order summary and verify items and totals are correct.
@@ -193,22 +253,30 @@ Verify order confirmation page displays.
 
 Code refactored but same UI flow → **Leave test unchanged.**
 
+### Example 4: Feature Removed — Test Deleted
+
+**Code change:** Removed the wishlist feature entirely
+
+**Action:** Delete the "User adds product to wishlist" test. Update any suite that referenced it.
+
 ## Checklist
 
 - [ ] Read and understood code changes
 - [ ] Found existing tests via `browse_folder` / `list_tests`
-- [ ] Evaluated each test — determined which need updating
+- [ ] Evaluated each test — determined valid, outdated, or obsolete
+- [ ] Presented update plan to user and got confirmation
 - [ ] Updated prompts in natural language (no selectors)
 - [ ] Used two-phase update (preview → confirm)
 - [ ] **Did NOT modify any code files**
 - [ ] Deleted obsolete tests if features were removed
-- [ ] Created new tests for new flows (via `/generate-tests`)
+- [ ] Created new tests for new flows (via `generate-test`)
+- [ ] Checked and updated related test suites
 
 ## Key Reminders
 
 - **Natural language only** — Write for humans, not robots
 - **Never touch code** — Only read code, only update tests via MCP
-- **Update in place** — Same test name, same folder
+- **Update in place** — Same test, same folder
 - **Only if broken** — Don't fix what works
 - **Two-phase updates** — Always preview before confirming
 
