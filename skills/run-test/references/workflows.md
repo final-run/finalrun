@@ -215,6 +215,15 @@ Args: {
 }
 ```
 
+**2. Create a Web App Version**
+```json
+Tool: create_web_app_version
+Args: {
+"url": "https://example.com",
+"platform": "WebAppAndroid" or "WebAppIOS"
+}
+```
+
 ---
 
 ## 7. Run a Test Locally

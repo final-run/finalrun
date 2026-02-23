@@ -74,6 +74,14 @@ Resolve `appId` by app name, upload a binary, and add it as a new app version.
 | `appName` | string | Yes | Existing app name used to resolve `appId` |
 | `filePath` | string | Yes | Absolute path to APK/APP file |
 
+### `create_web_app_version`
+Create a new web app upload for a given URL and platform.
+
+| Param | Type | Required | Notes |
+|---|---|---|---|
+| `url` | string | Yes | The URL of the web app |
+| `platform` | string | Yes | `WebAppAndroid` or `WebAppIOS` |
+
 ---
 
 ## Tests
