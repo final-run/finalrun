@@ -6,7 +6,7 @@ FinalRun MCP tools grouped by category.
 
 ## Conventions
 
-- For all `platform` and `autoSelectPlatform` fields, use lowercase `android` or `ios`.
+- For all `platform` and `autoSelectPlatform` fields, use these exact values: `Android` or `IOS`.
 - `appMapping` is required in run tools.
 - `appId` identifies the app container (`appName` lives on that app record), and `appUploadId` identifies the uploaded version/build.
 - Name-based run tools support exact/close matching; for deterministic behavior, pass an exact known name.
@@ -29,7 +29,7 @@ Response includes health status and the organization name.
 
 ### `list_supported_devices`
 Get cloud device requirements available for test execution.
-Response `platform` values are `android` or `ios`.
+Response `platform` values are `Android` or `IOS`.
 
 | Param | Type | Required | Notes |
 |---|---|---|---|

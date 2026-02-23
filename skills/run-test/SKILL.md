@@ -49,7 +49,7 @@ Before any test operation:
 - Android app upload -> Android devices only
 - iOS app upload -> iOS devices only
 - Never map Android app to iOS device, or iOS app to Android device
-- For `platform` and `autoSelectPlatform` parameters, use lowercase values: `android` or `ios`
+- For `platform` and `autoSelectPlatform` parameters, use these exact values: `Android` or `IOS`
 
 ## Workflow Steps
 
@@ -77,7 +77,7 @@ If the test or suite doesn't exist, follow the `generate-test` workflow to creat
 
 ```
 Use MCP tool: list_supported_devices
-Arguments: { "platform": "android" }  # or "ios"
+Arguments: { "platform": "Android" }  # or "IOS"
 ```
 
 Note the `requirementId` for the target device(s).
@@ -97,7 +97,7 @@ Search for the app binary to use:
 
 ```
 Use MCP tool: available_apps
-Arguments: { "search": "<app name>", "platform": "android" }  # or "ios"
+Arguments: { "search": "<app name>", "platform": "Android" }  # or "IOS"
 ```
 
 - **If app exists** — select the appropriate `appId` + `appUploadId` pair
@@ -185,12 +185,12 @@ Then follow:
 
 1. **Existing app path**
    - Call `available_apps`
-   - Filter/select by platform (`android` or `ios`)
+   - Filter/select by platform (`Android` or `IOS`)
    - Pick target app node by `appId`, then read its `appName`
    - Call `create_app_version(appName, filePath)` using that exact `appName`
 
 2. **New app path**
-   - Confirm platform (`android` or `ios`)
+   - Confirm platform (`Android` or `IOS`)
    - Call `create_app(name, appKnowledge?)` -> get `appId`
    - Call `create_app_version(appName, filePath)` to upload first version
 
@@ -220,7 +220,7 @@ Use `available_apps` response to get valid pairs.
 
 Each device target must include exactly one:
 - `cloudRequirementId`
-- `autoSelectPlatform` (`android` or `ios`)
+- `autoSelectPlatform` (`Android` or `IOS`)
 
 ## Two-Phase Confirmation Pattern
 

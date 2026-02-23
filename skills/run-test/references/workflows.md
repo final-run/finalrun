@@ -28,7 +28,7 @@ Args: {
 **3. Get available devices**
 ```json
 Tool: list_supported_devices
-Args: { "platform": "android" }
+Args: { "platform": "Android" }
 ```
 → Find the Pixel 7 entry, note its `requirementId`.
 
@@ -85,7 +85,7 @@ Args: { "search": "MyApp", "limit": 5 }
 Tool: run_test_by_name_on_devices
 Args: {
   "testName": "Login Test",
-  "devices": [{ "autoSelectPlatform": "android" }],
+  "devices": [{ "autoSelectPlatform": "Android" }],
   "appMapping": { "<appId>": "<new-appUploadId>" }
 }
 ```

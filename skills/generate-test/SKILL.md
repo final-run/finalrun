@@ -165,7 +165,7 @@ Use MCP tool: create_test_suite
 Arguments:
   name: "<Feature Name>"
   description: "<Brief description of what the suite covers>"
-  autoSelectPlatform: "android"  # or "ios"
+  autoSelectPlatform: "Android"  # or "IOS"
   testIds: ["<prerequisite-test-id-1>", "<prerequisite-test-id-2>", ..., "<feature-test-id-1>", "<feature-test-id-2>", ...]
 ```
 
