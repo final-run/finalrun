@@ -215,10 +215,27 @@ Args: {
 }
 ```
 
+---
+
+## 7. Create a New Web App and Upload
+
+> _"Create a new Web app (WebAppAndroid or WebAppIOS) as a brand new app called 'MyNewApp'."_
+
+### Steps
+
+**1. Create the app**
+```json
+Tool: create_app
+Args: {
+  "name": "MyNewApp"
+}
+```
+
 **2. Create a Web App Version**
 ```json
 Tool: create_web_app_version
 Args: {
+"appName": "MyNewApp",
 "url": "https://example.com",
 "platform": "WebAppAndroid" or "WebAppIOS"
 }
@@ -226,7 +243,7 @@ Args: {
 
 ---
 
-## 7. Run a Test Locally
+## 8. Run a Test Locally
 
 > _"Run the Login Test on my connected Pixel device."_
 

@@ -79,6 +79,7 @@ Create a new web app upload for a given URL and platform.
 
 | Param | Type | Required | Notes |
 |---|---|---|---|
+| `appName` | string | Yes | Existing app name used to resolve `appId` |
 | `url` | string | Yes | The URL of the web app |
 | `platform` | string | Yes | `WebAppAndroid` or `WebAppIOS` |
 
