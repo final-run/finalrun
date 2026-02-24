@@ -36,10 +36,8 @@ Before any test operation:
 
 ## Required Inputs
 
-- **Create Test**: `name`, `prompt`
-- **Run Test**: test + `appMapping` + one compatible devices
-- **Create Test Suite**: suite `name` (add tests afterward using `update_test_suites_by_name` with `testIds`)
-- **Run Test Suite**: suite + `appMapping` + one compatible devices
+- **Run Test**: test name + `appMapping` + one compatible devices - cloud or local
+- **Run Test Suite**: suite name + `appMapping` + one compatible devices - cloud or local
 
 ## Platform Compatibility Rule (Strict)
 
