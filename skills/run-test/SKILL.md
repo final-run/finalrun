@@ -207,9 +207,20 @@ Use `available_apps` response to get valid pairs.
 
 ## Device Targeting
 
-Each device target must include exactly one:
-- `cloudRequirementId`
-- `autoSelectPlatform` (`Android` or `IOS`)
+For **cloud** runs, each device target must include exactly one:
+- `cloudRequirementId` — from `list_supported_devices`, targets a specific cloud device
+- `autoSelectPlatform` (`Android` or `IOS`) — auto-assigns any available device of that platform
+
+For **local** runs:
+- Use `list_local_devices` to discover connected devices
+- Provide `deviceUUID` from the discovered device
+
+Decision flow:
+1. Ask: **Local** or **Cloud** run?
+2. **Cloud** → Ask: auto-select or specific device?
+   - Auto-select → use `autoSelectPlatform` (derived from app platform)
+   - Specific → use `list_supported_devices` → pick `cloudRequirementId`
+3. **Local** → use `list_local_devices` → pick `deviceUUID`
 
 ## Two-Phase Confirmation Pattern
 
