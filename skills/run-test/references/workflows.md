@@ -30,7 +30,7 @@ Args: {
 Tool: list_supported_devices
 Args: { "platform": "Android" }
 ```
-→ Find the Pixel 7 entry, note its `requirementId`.
+→ Find the device entry, note its `requirementId`.
 
 **4. Get app mapping (if testing a specific upload)**
 ```json
@@ -260,9 +260,15 @@ Args: {}
 Tool: list_local_devices
 Args: {}
 ```
+
+**Device selection logic:**
+- **No devices found** → **Abort.** Inform the user that no local devices were detected and suggest troubleshooting (e.g., ensure the emulator/simulator is running, check USB connection, or run `adb devices` / `xcrun simctl list`).
+- **Exactly one device found** → Automatically select it. Note its `uuid`.
+- **Multiple devices found** → Check if the user already specified a device name or platform. If so, match and select it. Otherwise, **ask the user** which device to use by listing the available devices (name, platform, status).
+
 → Find the target device, note its `uuid`.
 
-**3. Get app mapping**
+**3. Resolve app mapping**
 ```json
 Tool: available_apps
 Args: { "search": "MyApp" }
