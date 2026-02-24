@@ -34,15 +34,12 @@ Before any test operation:
 
 > For creating tests, see `generate-test`. For updating or deleting tests, see `update-test`.
 
-## Quick Start
+## Required Inputs
 
-```text
-1. ping                                    # verify MCP is healthy
-2. list_tests / list_test_suites           # find the test or suite to run
-3. list_supported_devices()                # pick target device(s)
-4. available_apps()                        # select appId + appUploadId
-5. run_test_by_name_on_devices / run_test_suite_by_name_on_devices
-```
+- **Create Test**: `name`, `prompt`
+- **Run Test**: test + `appMapping` + one compatible devices
+- **Create Test Suite**: suite `name` (add tests afterward using `update_test_suites_by_name` with `testIds`)
+- **Run Test Suite**: suite + `appMapping` + one compatible devices
 
 ## Platform Compatibility Rule (Strict)
 
@@ -206,12 +203,6 @@ Canonical format:
 
 ```json
 { "appId": "appUploadId" }
-```
-
-Also accepted:
-
-```json
-{ "appId": { "id": "appUploadId" } }
 ```
 
 Use `available_apps` response to get valid pairs.
