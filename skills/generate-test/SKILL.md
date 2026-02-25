@@ -83,6 +83,7 @@ The prompt drives the entire test execution. Guidelines:
 - **Reference actual UI elements**: Use text labels, button names, and screen titles from the source code
 - **Keep it sequential**: Write steps in execution order
 - **Include expected outcomes inline**: "After tapping Submit, a success toast should appear"
+- **Do not Add "open or launch the app" in the prompt**: The FinalRun runner automatically launches the app before executing tests. Never start prompts with "Open the app", "Launch the app", or similar. Begin directly with navigation or interaction steps.
 
 #### Example Prompt
 
