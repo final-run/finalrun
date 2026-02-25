@@ -7,7 +7,7 @@ FinalRun MCP tools grouped by category.
 ## Conventions
 
 - For all `platform` and `autoSelectPlatform` fields, use these exact values: `Android` or `IOS`.
-- `appMapping` is required in run tools.
+- `appMapping` is required in run tools and in `create_test_suite`.
 - `appId` identifies the app container (`appName` lives on that app record), and `appUploadId` identifies the uploaded version/build.
 - Name-based run tools support exact/close matching; for deterministic behavior, pass an exact known name.
 
@@ -95,6 +95,8 @@ Create one AI-goal test from name + prompt.
 | `name` | string | Yes | Test name |
 | `prompt` | string | Yes | Natural-language AI goal/instruction |
 
+`create_test` does not take `folderId`. To place tests in folders, use `bulk_move` with `testIds` and `targetFolderId`.
+
 ### `list_tests`
 List tests in the organization (paginated, searchable).
 
@@ -139,9 +141,11 @@ Create one test suite in the organization.
 |---|---|---|---|
 | `name` | string | Yes | Test suite name |
 | `description` | string | No | Optional suite description (defaults to name) |
+| `testIds` | list | Yes | Ordered list of test IDs included in the suite |
+| `appMapping` | object | Yes | Map: `{ appId: appUploadId }` |
 | `autoSelectPlatform` | string | No | Optional default platform hint |
 
-`create_test_suite` does not take `testIds`. Add/replace suite membership later using `update_test_suites_by_name` with `testIds`.
+Use `update_test_suites_by_name` when you need to replace suite membership (`testIds`) or update suite metadata after creation.
 
 ### `list_test_suites`
 List test suites in the organization (paginated, searchable).
@@ -308,4 +312,3 @@ Stop an in-progress local test run.
 | Param | Type | Required | Notes |
 |---|---|---|---|
 | `testRunId` | string | Yes | ID of the test run to stop |
-

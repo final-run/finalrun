@@ -118,25 +118,52 @@ Arguments:
 
 Note the returned `folderId` for use in the next step.
 
-### Step 6 — Create Tests Inside the Folder
+### Step 6 — Create Tests, Then Move Them Into the Folder
 
-For each planned test, create it directly inside the folder from Step 5:
+For each planned test, create it first:
 
 ```
 Use MCP tool: create_test
 Arguments:
   name: "<test name from spec>"
   prompt: "<full prompt from spec>"
-  folderId: "<folder-id-from-step-5>"
 ```
 
 The tool will return the test ID upon success. Keep track of all created test IDs.
+
+After creating all tests for the feature, move them into the folder from Step 5:
+
+```
+Use MCP tool: bulk_move
+Arguments:
+  testIds: ["<test-id-1>", "<test-id-2>", ...]
+  targetFolderId: "<folder-id-from-step-5>"
+```
 
 ### Step 7 — Group into a Test Suite
 
 A test suite is an **ordered sequence of tests** that run end-to-end on a device. To test a feature, the suite must include any **prerequisite tests** (e.g., login, navigation) that set up the required state, followed by the feature tests themselves — all in execution order.
 
-#### 7a. Identify prerequisite tests
+#### 7a. Resolve app mapping prerequisite
+
+`create_test_suite` requires an app mapping up front.
+
+Collect app mapping before suite creation:
+
+```
+Use MCP tool: available_apps
+Arguments: { "search": "<app name>", "platform": "Android" }  # or "IOS"
+```
+
+Build:
+
+```
+appMapping: { "<appId>": "<appUploadId>" }
+```
+
+If no suitable upload exists yet, defer Step 7d. Continue creating/moving tests, and return to Step 7d after an app upload is available.
+
+#### 7b. Identify prerequisite tests
 
 Determine what tests must run before the feature tests. For example, to test a Product Details page you need: 
 
@@ -144,7 +171,7 @@ Determine what tests must run before the feature tests. For example, to test a P
 2. **Navigate to product** — search for a product and open the details page
 3. **Product details tests** — the actual feature tests created in Step 6
 
-#### 7b. Check if prerequisite tests exist
+#### 7c. Check if prerequisite tests exist
 
 Search for each prerequisite test:
 
@@ -154,9 +181,9 @@ Arguments: { "search": "<prerequisite keyword>" }
 ```
 
 - **If the test exists** — note its test ID.
-- **If the test does not exist** — create it using `create_test` (with the appropriate `folderId`), then note the returned test ID.
+- **If the test does not exist** — create it using `create_test`, note the returned test ID, then move it into the feature folder with `bulk_move`.
 
-#### 7c. Create the test suite in order
+#### 7d. Create the test suite in order
 
 Assemble all test IDs — prerequisites first, then feature tests — in execution order:
 
@@ -167,6 +194,7 @@ Arguments:
   description: "<Brief description of what the suite covers>"
   autoSelectPlatform: "Android"  # or "IOS"
   testIds: ["<prerequisite-test-id-1>", "<prerequisite-test-id-2>", ..., "<feature-test-id-1>", "<feature-test-id-2>", ...]
+  appMapping: { "<appId>": "<appUploadId>" }
 ```
 
 ## Test Prioritization
@@ -185,8 +213,8 @@ Arguments:
 - [ ] Folder set up via `browse_folder` / `create_folder`
 - [ ] Each test name describes a user action (not implementation detail)
 - [ ] Prompts are specific, sequential, and include verification steps
-- [ ] Tests created inside the folder via `create_test` with `folderId`
-- [ ] Suite created via `create_test_suite` with prerequisite + feature tests in order
+- [ ] Tests created via `create_test`, then moved into folder via `bulk_move`
+- [ ] Suite created via `create_test_suite` with prerequisite + feature tests in order, plus `appMapping`
 
 ## Anti-Patterns
 
