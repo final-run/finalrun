@@ -23,6 +23,21 @@ Before updating tests:
 4. **Update in place** — Same test, same folder — preserve name unless scope fundamentally changed
 5. **No app relaunch** — Never include "close app", "relaunch app", or "reopen app" steps in prompts
 
+## User Input & Credentials
+
+When updating test prompts that reference user-specific data (login credentials, form values, environment details), follow these rules:
+
+1. **Never guess or fabricate** credentials, emails, passwords, or account-specific values in updated prompts.
+2. **Ask the user** if an updated flow requires new inputs that are unknown — this includes but is not limited to:
+   - Login credentials (username, email, password)
+   - Form field values (addresses, phone numbers, payment details)
+   - Environment-specific URLs or endpoints
+   - Account-specific data (user IDs, org names, project names)
+3. **Preserve existing values** — if the original prompt already contains credentials or user data and the flow hasn't changed for those fields, keep them as-is.
+4. **Ask during Step 4 (Review the Update Plan)** — identify any new required user inputs and resolve them before executing updates.
+
+> Not asking the user for unknown inputs is a **blocker** — do not skip this step or invent placeholder values.
+
 ## Your Only Job
 
 1. **Read** the code changes

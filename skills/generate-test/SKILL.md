@@ -33,6 +33,21 @@ Before generating tests:
 - Check for duplicate coverage before creating new tests (use `list_tests`)
 - Focus on critical workflows users actually need
 
+## User Input & Credentials
+
+Test prompts often reference user-specific data such as login credentials, form values, or environment-specific details. Follow these rules:
+
+1. **Never guess or fabricate** credentials, emails, passwords, or account-specific values when writing prompts.
+2. **Ask the user** if any required test input is unknown — this includes but is not limited to:
+   - Login credentials (username, email, password)
+   - Form field values (addresses, phone numbers, payment details)
+   - Environment-specific URLs or endpoints
+   - Account-specific data (user IDs, org names, project names)
+3. **Ask during Step 2 (Plan the Tests)** — identify all required user inputs while planning and resolve them before writing prompts.
+4. **Use the exact values provided** by the user in test prompts — do not substitute or anonymize them.
+
+> Not asking the user for unknown inputs is a **blocker** — do not skip this step or use placeholder values like `user@test.com` / `password123` unless the user explicitly provides them.
+
 ## Workflow Steps
 
 ### Step 1 — Analyze the Feature

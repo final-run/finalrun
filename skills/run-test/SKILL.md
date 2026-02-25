@@ -39,6 +39,21 @@ Before any test operation:
 - **Run Test**: test name + `appMapping` + one compatible devices - cloud or local
 - **Run Test Suite**: suite name + `appMapping` + one compatible devices - cloud or local
 
+## User Input & Credentials
+
+Tests often require user-specific data such as login credentials, form values, environment URLs, or account details. Follow these rules:
+
+1. **Never guess or fabricate** credentials, emails, passwords, API keys, or environment-specific values.
+2. **Ask the user** before proceeding if any required test input is unknown — this includes but is not limited to:
+   - Login credentials (username, email, password)
+   - Form field values (addresses, phone numbers, payment details)
+   - Environment-specific URLs or endpoints
+   - Account-specific data (user IDs, org names, project names)
+3. **Ask early** — identify required inputs during Step 1 (finding the test) and resolve them before Step 4 (confirming the run plan).
+4. **Include provided values** in the run plan confirmation so the user can verify them.
+
+> Not asking the user for unknown inputs is a **blocker** — do not skip this step.
+
 ## Platform Compatibility Rule (Strict)
 
 - Android app upload -> Android devices only

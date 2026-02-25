@@ -16,30 +16,34 @@ Tool: ping
 Args: {}
 ```
 
-**2. Create the test**
+**2. Ask the user for required test inputs**
+> The test involves login — ask the user for the credentials to use (e.g. email and password). Do not guess or use placeholders.
+
+**3. Create the test**
 ```json
 Tool: create_test
 Args: {
   "name": "Login Flow",
-  "prompt": "Open the app, enter valid credentials, tap Sign In, and verify the home screen appears."
+  "prompt": "Open the app, enter 'user@example.com' in the email field and 'SecurePass1!' in the password field, tap Sign In, and verify the home screen appears."
 }
 ```
+> ↑ Use the exact credentials provided by the user.
 
-**3. Get available devices**
+**4. Get available devices**
 ```json
 Tool: list_supported_devices
 Args: { "platform": "Android" }
 ```
 → Find the device entry, note its `requirementId`.
 
-**4. Get app mapping (if testing a specific upload)**
+**5. Get app mapping (if testing a specific upload)**
 ```json
 Tool: available_apps
 Args: { "search": "MyApp" }
 ```
 → Note the `appId` and `appUploadId`.
 
-**5. Run the test**
+**6. Run the test**
 ```json
 Tool: run_test_by_name_on_devices
 Args: {
@@ -145,23 +149,26 @@ Args: {
 
 ### Steps
 
-**1. Preview matches**
+**1. Ask the user for any new credentials or form data** needed in the updated prompt. Do not guess.
+
+**2. Preview matches**
 ```json
 Tool: update_tests_by_name
 Args: {
   "testNameQuery": "login",
-  "prompt": "Open the app, enter valid credentials, tap Sign In, and verify the home screen appears."
+  "prompt": "Open the app, enter 'user@example.com' in the email field and 'SecurePass1!' in the password field, tap Sign In, and verify the home screen appears."
 }
 ```
 → Returns list of matched tests + `confirmationToken`. Show to user.
+> ↑ Use the exact credentials provided by the user.
 
-**2. Confirm execution**
+**3. Confirm execution**
 ```json
 Tool: update_tests_by_name
 Args: {
   "testNameQuery": "login",
   "confirm": true,
-  "confirmationToken": "<token-from-step-1>"
+  "confirmationToken": "<token-from-step-2>"
 }
 ```
 
