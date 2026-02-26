@@ -32,12 +32,12 @@ Before any test operation:
 4. **Confirm** the run plan with the user
 5. **Execute** the test run
 
-> For creating tests, see `generate-test`. For updating or deleting tests, see `update-test`.
+> For creating tests, see `finalrun-generate-test`. For updating or deleting tests, see `finalrun-update-test`.
 
 ## Required Inputs
 
-- **Run Test**: test name + `appMapping` + one compatible devices - cloud or local
-- **Run Test Suite**: suite name + `appMapping` + one compatible devices - cloud or local
+- **Run Test**: test name + `appMapping` + one compatible device target (cloud or local)
+- **Run Test Suite**: suite name + `appMapping` + one compatible device target (cloud or local)
 
 ## User Input & Credentials
 
@@ -60,6 +60,7 @@ Tests often require user-specific data such as login credentials, form values, e
 - iOS app upload -> iOS devices only
 - Never map Android app to iOS device, or iOS app to Android device
 - For `platform` and `autoSelectPlatform` parameters, use these exact values: `Android` or `IOS`
+- In prose, "iOS" and `IOS` refer to the same platform; use `IOS` only when setting MCP arguments.
 
 ## Workflow Steps
 
@@ -79,7 +80,7 @@ Use MCP tool: list_test_suites
 Arguments: { "search": "<suite name keyword>" }
 ```
 
-If the test or suite doesn't exist, follow the `generate-test` workflow to create it first.
+If the test or suite doesn't exist, follow the `finalrun-generate-test` workflow to create it first.
 
 ### Step 2 — Select Target Devices
 
@@ -110,7 +111,7 @@ Use MCP tool: available_apps
 Arguments: { "search": "<app name>", "platform": "Android" }  # or "IOS"
 ```
 
-- **If app exists** — select the appropriate `appId` + `appUploadId` pair
+- **If app exists** — if the user specified an upload, use that exact `appId` + `appUploadId`; otherwise, ask the user to choose the upload from the returned platform-compatible list
 - **If no app is available** — upload a new binary following the Upload Routing Rule below
 
 **Platform inference:**
@@ -239,7 +240,7 @@ Decision flow:
 
 ## Two-Phase Confirmation Pattern
 
-For update/delete bulk actions:
+For update/delete bulk actions in other workflows (for example, `finalrun-update-test`):
 
 ```text
 Step 1: Call without confirm=true -> receive preview + confirmationToken
@@ -247,6 +248,8 @@ Step 2: Call with confirm=true + confirmationToken -> execute
 ```
 
 Always show preview to user before confirm.
+
+This two-phase pattern does not apply to `run_test_by_name_on_devices`, `run_test_suite_by_name_on_devices`, `run_test_locally`, or `run_test_suite_locally`.
 
 ## Error Recovery
 
@@ -267,8 +270,8 @@ Always show preview to user before confirm.
 
 ## Related Skills
 
-- **Creating tests**: See `generate-test` workflow
-- **Updating or deleting tests**: See `update-test` workflow
+- **Creating tests**: See `finalrun-generate-test` workflow
+- **Updating or deleting tests**: See `finalrun-update-test` workflow
 
 ## References
 

@@ -21,7 +21,11 @@ Before updating tests:
 2. **NEVER modify code** — Only read code, only update tests via MCP
 3. **If test still valid, do nothing** — Don't fix what works
 4. **Update in place** — Same test, same folder — preserve name unless scope fundamentally changed
-5. **No app relaunch** — Never include "close app", "relaunch app", or "reopen app" steps in prompts
+5. **Login can be a prerequisite** — If the flow needs sign-in, include login prerequisites and verify the in-app outcome
+6. **Do not validate auth provider internals** — OAuth/Google/Facebook/GitHub internals are out of scope
+7. **App relaunch is conditional** — Include relaunch only when the scenario requires it; state why and verify expected state after relaunch
+8. **Never invent data** — Never invent credentials, OTP, user identities, test data, login paths, `appId`, or `appUploadId`
+9. **Missing required info means stop** — Ask the user before proceeding
 
 ## User Input & Credentials
 
@@ -47,7 +51,7 @@ When updating test prompts that reference user-specific data (login credentials,
 5. **Present** the update plan to the user for confirmation
 6. **Update** outdated test prompts via MCP (never touch code)
 7. **Delete** obsolete tests if features were removed
-8. **Create** new tests for new flows (via `generate-test`)
+8. **Create** new tests for new flows (via `finalrun-generate-test`)
 
 ## When to Update
 
@@ -63,7 +67,7 @@ When updating test prompts that reference user-specific data (login credentials,
 - Code refactored, same UI
 - Only styling changed
 - Backend changes, frontend unchanged
-- Third-party authentication flows (OAuth, Google, Facebook, GitHub)
+- Third-party authentication provider internals (OAuth, Google, Facebook, GitHub)
 - **Test still accurately describes current flow**
 
 ## Natural Language Prompts
@@ -128,6 +132,17 @@ Use MCP tool: list_test_suites
 Arguments: { "search": "<feature keyword>" }
 ```
 
+Before moving to Step 3, collect run preconditions for changed flows:
+- Confirm whether authentication is required
+- Ask for approved login method and test credentials (or how credentials will be supplied)
+- Ask for MFA/OTP handling if applicable
+- Ask for required account state, seed data, permissions, feature flags, and environment assumptions
+
+Hard rules:
+- Never guess login paths or random account details
+- Never invent credentials, OTP, or test data
+- If any required precondition is missing, stop and ask the user
+
 ### Step 3 — Evaluate Each Test
 
 For each test found, compare the prompt against the new code behavior:
@@ -142,10 +157,13 @@ Present the evaluation from Step 3 to the user for review:
 - List tests that are **outdated** with the proposed updated prompt
 - List tests that are **obsolete** and will be deleted
 - List any **new tests** needed for new flows
+- List prerequisite dependency mapping for changed/new flows (`auth`, `navigation`, `data state`, `permissions`)
+- List suite order impact (prerequisites first, then feature tests)
+- Confirm readiness of credentials, preconditions, and app upload/mapping when suite context is affected
 - Allow the user to confirm, edit, or adjust the plan
 - Incorporate the user's feedback and finalize before execution
 
-Do not execute any updates or deletions until the user confirms the plan.
+Do not execute any updates, deletions, or creations until the user confirms the full plan.
 
 ### Step 5 — Update Outdated Tests
 
@@ -170,7 +188,7 @@ Arguments:
 ```
 
 **What to update:**
-- `prompt` — New flow description with verification steps. Follow the prompt guidelines from `generate-test` — be specific, sequential, and include verification steps.
+- `prompt` — New flow description with verification steps. Follow the prompt guidelines from `finalrun-generate-test` — be specific, sequential, and include verification steps.
 
 **What you MAY update (only if necessary):**
 - `name` — If the scope fundamentally changed
@@ -198,7 +216,7 @@ Arguments:
 
 ### Step 7 — Create New Tests (If Needed)
 
-If the code change introduced a **new user flow** not covered by existing tests, create a new test inside the appropriate folder. Follow the `generate-test` workflow (Steps 5–7) for this.
+If the code change introduced a **new user flow** not covered by existing tests, create a new test inside the appropriate folder. Follow the `finalrun-generate-test` workflow, including auth/preconditions intake, prerequisite dependency mapping, app upload/mapping gating, and suite order confirmation.
 
 ### Step 8 — Update Related Test Suites (If Needed)
 
@@ -214,6 +232,28 @@ Update the suite if:
 - A **new test** was created → add it to the suite's `testIds` in the correct order
 - **Prerequisite tests** changed → update the suite order
 
+If suite update requires app mapping, resolve it first:
+
+```
+Use MCP tool: available_apps
+Arguments: { "search": "<app name>", "platform": "Android" }  # or "IOS"
+```
+
+Build:
+
+```
+appMapping: { "<appId>": "<appUploadId>" }
+```
+
+If no suitable upload exists:
+- Ask the user to upload/provide an app version
+- Ask for target platform, app name, and either app binary path or existing `appId` + `appUploadId`
+- Do not proceed with suite update that needs mapping until mapping is confirmed
+
+Hard rules:
+- Never invent or guess `appId`/`appUploadId`
+- Do not proceed without confirmed mapping when required
+
 ```
 Use MCP tool: update_test_suites_by_name
 Arguments:
@@ -221,7 +261,25 @@ Arguments:
   testIds: ["<updated-ordered-test-ids>"]
 ```
 
-Then confirm with the returned token.
+Then confirm:
+
+```
+Use MCP tool: update_test_suites_by_name
+Arguments:
+  testSuiteNameQuery: "<suite name>"
+  confirm: true
+  confirmationToken: "<token-from-preview>"
+```
+
+### Stop Conditions (Required)
+
+Pause and ask the user instead of proceeding if any of the following is true:
+- Missing or unconfirmed credentials for required login flows
+- Unclear authentication path or unclear MFA/OTP handling
+- Missing account state/data/permissions/environment assumptions needed for a flow
+- Missing suitable app upload for the target platform when app mapping is required
+- Missing confirmed `appMapping` when suite update requires it
+- Ambiguous prerequisite dependency mapping or suite order
 
 ## Update Examples
 
@@ -279,14 +337,19 @@ Code refactored but same UI flow → **Leave test unchanged.**
 
 - [ ] Read and understood code changes
 - [ ] Found existing tests via `browse_folder` / `list_tests`
+- [ ] Collected auth and setup preconditions for changed flows
 - [ ] Evaluated each test — determined valid, outdated, or obsolete
 - [ ] Presented update plan to user and got confirmation
 - [ ] Updated prompts in natural language (no selectors)
 - [ ] Used two-phase update (preview → confirm)
 - [ ] **Did NOT modify any code files**
 - [ ] Deleted obsolete tests if features were removed
-- [ ] Created new tests for new flows (via `generate-test`)
+- [ ] Created new tests for new flows (via `finalrun-generate-test`)
 - [ ] Checked and updated related test suites
+- [ ] Mapped prerequisite dependencies (`auth`, `navigation`, `data state`, `permissions`) where needed
+- [ ] Confirmed suite order updates (prerequisites first, then feature tests)
+- [ ] Confirmed app upload and `appMapping` when required
+- [ ] Did not invent credentials, OTP, test data, login path, or app mapping
 
 ## Key Reminders
 
@@ -295,5 +358,8 @@ Code refactored but same UI flow → **Leave test unchanged.**
 - **Update in place** — Same test, same folder
 - **Only if broken** — Don't fix what works
 - **Two-phase updates** — Always preview before confirming
+- **Do not guess setup data** — Ask for credentials, OTP handling, and required preconditions
+- **Keep suite order valid** — Prerequisites first, then feature tests
+- **Do not guess app mapping** — Require confirmed `appId` + `appUploadId` when needed
 
 **If test still accurately describes the flow, don't touch it.**
